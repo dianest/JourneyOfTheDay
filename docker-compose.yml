@@ -9,8 +9,6 @@ services:
       - MYSQL_DATABASE=app
       - MYSQL_USER=app
       - MYSQL_PASSWORD=pass
-    volumes:
-      - './sql-schema:/docker-entrypoint-initdb.d'
   postgresdb:
     image: 'postgres:12-alpine'
     restart: always
