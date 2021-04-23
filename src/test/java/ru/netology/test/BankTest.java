@@ -5,20 +5,23 @@ import org.junit.jupiter.api.*;
 import ru.netology.data.Card;
 import ru.netology.data.DataGenerator;
 import ru.netology.db.DbUtils;
-import ru.netology.page.TripOfTheDayPage;
+import ru.netology.page.CreditPage;
+import ru.netology.page.PaymentPage;
+import ru.netology.page.RequestPage;
+import ru.netology.page.StartPage;
 
 import static com.codeborne.selenide.Selenide.open;
 import static ru.netology.db.DbUtils.clearTables;
 
 public class BankTest {
-    private TripOfTheDayPage tripOfTheDayPage;
+    private StartPage startPage;
 
     @BeforeEach
     public void setup() {
         clearTables();
         open("http://localhost:8080/");
 
-        tripOfTheDayPage = new TripOfTheDayPage();
+        startPage = new StartPage();
     }
 
     /**
@@ -45,8 +48,9 @@ public class BankTest {
      */
     @Test
     public void testExpiredCardPayment() {
-        tripOfTheDayPage = tripOfTheDayPage.makePaymentRequest(DataGenerator.generateExpiredYearCard());
-        tripOfTheDayPage.assertCardExpiredError();
+        final PaymentPage paymentPage = startPage.openPaymentPage();
+        paymentPage.makeRequest(DataGenerator.generateExpiredYearCard());
+        paymentPage.assertCardExpiredError();
     }
 
     /**
@@ -55,8 +59,9 @@ public class BankTest {
      */
     @Test
     public void testWrongCardDataPayment() {
-        tripOfTheDayPage = tripOfTheDayPage.makePaymentRequest(DataGenerator.generateExpiredMonthCard());
-        tripOfTheDayPage.assertWrongCardDateError();
+        final PaymentPage paymentPage = startPage.openPaymentPage();
+        paymentPage.makeRequest(DataGenerator.generateExpiredMonthCard());
+        paymentPage.assertWrongCardDateError();
     }
 
     /**
@@ -65,8 +70,9 @@ public class BankTest {
      */
     @Test
     public void testInvalidCodeCardPayment() {
-        tripOfTheDayPage = tripOfTheDayPage.makePaymentRequest(DataGenerator.generateInvalidCodeCard());
-        tripOfTheDayPage.assertEmptyCodeError();
+        final PaymentPage paymentPage = startPage.openPaymentPage();
+        paymentPage.makeRequest(DataGenerator.generateInvalidCodeCard());
+        paymentPage.assertEmptyCodeError();
     }
 
     /**
@@ -84,8 +90,9 @@ public class BankTest {
      */
     @Test
     public void testEmptyHolderCardPayment() {
-        tripOfTheDayPage = tripOfTheDayPage.makePaymentRequest(DataGenerator.generateEmptyHolderCard());
-        tripOfTheDayPage.assertEmptyHolderError();
+        final PaymentPage paymentPage = startPage.openPaymentPage();
+        paymentPage.makeRequest(DataGenerator.generateEmptyHolderCard());
+        paymentPage.assertEmptyHolderError();
     }
 
     /**
@@ -121,8 +128,9 @@ public class BankTest {
      */
     @Test
     public void testExpiredCardCredit() {
-        tripOfTheDayPage = tripOfTheDayPage.makeCreditRequest(DataGenerator.generateExpiredYearCard());
-        tripOfTheDayPage.assertCardExpiredError();
+        final CreditPage creditPage = startPage.openCreditPage();
+        creditPage.makeRequest(DataGenerator.generateExpiredYearCard());
+        creditPage.assertCardExpiredError();
     }
 
     /**
@@ -131,8 +139,9 @@ public class BankTest {
      */
     @Test
     public void testWrongCardDataCredit() {
-        tripOfTheDayPage = tripOfTheDayPage.makeCreditRequest(DataGenerator.generateExpiredMonthCard());
-        tripOfTheDayPage.assertWrongCardDateError();
+        final CreditPage creditPage = startPage.openCreditPage();
+        creditPage.makeRequest(DataGenerator.generateExpiredMonthCard());
+        creditPage.assertWrongCardDateError();
     }
 
     /**
@@ -141,8 +150,9 @@ public class BankTest {
      */
     @Test
     public void testInvalidCodeCardCredit() {
-        tripOfTheDayPage = tripOfTheDayPage.makeCreditRequest(DataGenerator.generateInvalidCodeCard());
-        tripOfTheDayPage.assertEmptyCodeError();
+        final CreditPage creditPage = startPage.openCreditPage();
+        creditPage.makeRequest(DataGenerator.generateInvalidCodeCard());
+        creditPage.assertEmptyCodeError();
     }
 
     /**
@@ -160,8 +170,9 @@ public class BankTest {
      */
     @Test
     public void testEmptyHolderCardCredit() {
-        tripOfTheDayPage = tripOfTheDayPage.makeCreditRequest(DataGenerator.generateEmptyHolderCard());
-        tripOfTheDayPage.assertEmptyHolderError();
+        final CreditPage creditPage = startPage.openCreditPage();
+        creditPage.makeRequest(DataGenerator.generateEmptyHolderCard());
+        creditPage.assertEmptyHolderError();
     }
 
     /**
@@ -175,22 +186,24 @@ public class BankTest {
 
     private void test(Card card, RequestType requestType, boolean expectedSuccessful) {
         if(requestType == RequestType.PAYMENT) {
-            tripOfTheDayPage = tripOfTheDayPage.makePaymentRequest(card);
+            final PaymentPage paymentPage = startPage.openPaymentPage();
+            paymentPage.makeRequest(card);
             if(expectedSuccessful) {
-                tripOfTheDayPage.assertOperationSuccessful(
-                        new TripOfTheDayPage.ExternalCondition(unused -> DbUtils.checkPayment()));
+                paymentPage.assertOperationSuccessful(
+                        new RequestPage.ExternalCondition(unused -> DbUtils.checkPayment()));
             } else {
-                tripOfTheDayPage.assertOperationUnsuccessful(
-                        new TripOfTheDayPage.ExternalCondition(unused -> !DbUtils.checkPayment()));
+                paymentPage.assertOperationUnsuccessful(
+                        new RequestPage.ExternalCondition(unused -> !DbUtils.checkPayment()));
             }
         } else if(requestType == RequestType.CREDIT) {
-            tripOfTheDayPage = tripOfTheDayPage.makeCreditRequest(card);
+            final CreditPage creditPage = startPage.openCreditPage();
+            creditPage.makeRequest(card);
             if(expectedSuccessful) {
-                tripOfTheDayPage.assertOperationSuccessful(
-                        new TripOfTheDayPage.ExternalCondition(unused -> DbUtils.checkCredit()));
+                creditPage.assertOperationSuccessful(
+                        new RequestPage.ExternalCondition(unused -> DbUtils.checkCredit()));
             } else {
-                tripOfTheDayPage.assertOperationUnsuccessful(
-                        new TripOfTheDayPage.ExternalCondition(unused -> !DbUtils.checkCredit()));
+                creditPage.assertOperationUnsuccessful(
+                        new RequestPage.ExternalCondition(unused -> !DbUtils.checkCredit()));
             }
         } else {
             throw new IllegalArgumentException("Unexpected request type");

@@ -7,14 +7,13 @@ import com.codeborne.selenide.SelenideElement;
 import org.openqa.selenium.WebElement;
 import ru.netology.data.Card;
 
+import java.time.Duration;
 import java.util.function.Predicate;
 
 import static com.codeborne.selenide.Selenide.$$;
 import static com.codeborne.selenide.Selenide.$x;
 
-public class TripOfTheDayPage {
-    private final SelenideElement buyButton = $x("//*[text()=\"Купить\"]");
-    private final SelenideElement creditButton = $x("//*[contains(text(), \"Купить в кредит\")]");
+public abstract class RequestPage {
     private final SelenideElement continueButton = $x("//button[contains(., \"Продолжить\")]");
 
     private final SelenideElement cardExpiredError = $x("//*[text()=\"Истёк срок действия карты\"]");
@@ -33,26 +32,10 @@ public class TripOfTheDayPage {
     private final SelenideElement successfulNotification = $x("//*[text()=\"Успешно\"]");
     private final SelenideElement errorNotification = $x("//*[text()=\"Ошибка\"]");
 
-    public TripOfTheDayPage() {
+    public RequestPage() {
     }
 
-    public TripOfTheDayPage makePaymentRequest(Card card) {
-        buyButton.click();
-
-        cardNumber.sendKeys(card.getNumber());
-        month.sendKeys(card.getMonth());
-        year.sendKeys(card.getYear());
-        holder.sendKeys(card.getHolder());
-        code.sendKeys(card.getCode());
-
-        continueButton.click();
-
-        return this;
-    }
-
-    public TripOfTheDayPage makeCreditRequest(Card card) {
-        creditButton.click();
-
+    public RequestPage makeRequest(Card card) {
         cardNumber.sendKeys(card.getNumber());
         month.sendKeys(card.getMonth());
         year.sendKeys(card.getYear());
@@ -93,12 +76,12 @@ public class TripOfTheDayPage {
     }
 
     public void assertOperationSuccessful(ExternalCondition externalCondition) {
-        successfulNotification.waitUntil(Condition.visible, 15000)
+        successfulNotification.shouldBe(Condition.visible, Duration.ofSeconds(15))
                 .shouldBe(externalCondition);
     }
 
     public void assertOperationUnsuccessful(ExternalCondition externalCondition) {
-        errorNotification.waitUntil(Condition.visible, 15000)
+        errorNotification.shouldBe(Condition.visible, Duration.ofSeconds(15))
                 .shouldBe(externalCondition);
     }
 
