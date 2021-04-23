@@ -98,7 +98,7 @@ public final class DbUtils {
     private static void checkDriver(String datasource) {
         if ("mysql".equals(datasource)) {
             Class.forName("com.mysql.cj.jdbc.Driver");
-        } else if ("postgres".equals(datasource)) {
+        } else if ("postgresql".equals(datasource)) {
             Class.forName("org.postgresql.Driver");
         } else {
             throw new IllegalArgumentException("Unsupported datasource");
