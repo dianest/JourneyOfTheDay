@@ -18,8 +18,7 @@ repositories {
 dependencies {
     testImplementation 'com.github.javafaker:javafaker:1.0.2'
     testImplementation 'org.junit.jupiter:junit-jupiter:5.5.1'
-    testImplementation 'com.codeborne:selenide:5.3.1'
-    testImplementation 'io.rest-assured:rest-assured:4.3.0'
+    testImplementation 'com.codeborne:selenide:5.20.4'
     testImplementation 'com.google.code.gson:gson:2.8.6'
     testImplementation("mysql:mysql-connector-java:8.0.11")
     testImplementation("org.postgresql:postgresql:42.1.4")
