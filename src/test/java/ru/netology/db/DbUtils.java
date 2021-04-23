@@ -1,5 +1,7 @@
 package ru.netology.db;
 
+import lombok.SneakyThrows;
+
 import java.sql.*;
 
 public final class DbUtils {
@@ -7,96 +9,78 @@ public final class DbUtils {
 
     }
 
+    @SneakyThrows
     public static void clearTables() {
-        try {
-            try (Connection connection = createConnection()) {
-                try (Statement statement = connection.createStatement(
-                        ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
-                    statement.executeUpdate("DELETE FROM order_entity");
-                    statement.executeUpdate("DELETE FROM credit_request_entity");
-                    statement.executeUpdate("DELETE FROM payment_entity");
-                }
+        try (Connection connection = createConnection()) {
+            try (Statement statement = connection.createStatement(
+                    ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
+                statement.executeUpdate("DELETE FROM order_entity");
+                statement.executeUpdate("DELETE FROM credit_request_entity");
+                statement.executeUpdate("DELETE FROM payment_entity");
             }
-        } catch (ClassNotFoundException e) {
-            System.out.println("Could not find the database driver " + e.getMessage());
-        } catch (SQLException e) {
-            System.out.println("Could not connect to the database " + e.getMessage());
         }
     }
 
+    @SneakyThrows
     public static boolean checkPayment() {
-        try {
-            try (Connection connection = createConnection()) {
-                try (Statement statement = connection.createStatement(
-                        ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
-                    int paymentsCount = 0;
-                    int creditsCount = 0;
-                    int ordersCount = 0;
+        try (Connection connection = createConnection()) {
+            try (Statement statement = connection.createStatement(
+                    ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
+                int paymentsCount = 0;
+                int creditsCount = 0;
+                int ordersCount = 0;
 
-                    final ResultSet paymentsCountResult = statement.executeQuery(
-                            "SELECT COUNT(*) FROM payment_entity;");
-                    if (paymentsCountResult.first()) {
-                        paymentsCount = paymentsCountResult.getInt(1);
-                    }
-                    final ResultSet creditsCountResult = statement.executeQuery(
-                            "SELECT COUNT(*) FROM credit_request_entity;");
-                    if (creditsCountResult.first()) {
-                        creditsCount = creditsCountResult.getInt(1);
-                    }
-                    final ResultSet ordersCountResult = statement.executeQuery(
-                            "SELECT COUNT(*) FROM order_entity;");
-                    if (ordersCountResult.first()) {
-                        ordersCount = ordersCountResult.getInt(1);
-                    }
-                    return paymentsCount == 1 && ordersCount == 1 && creditsCount == 0;
+                final ResultSet paymentsCountResult = statement.executeQuery(
+                        "SELECT COUNT(*) FROM payment_entity;");
+                if (paymentsCountResult.first()) {
+                    paymentsCount = paymentsCountResult.getInt(1);
                 }
+                final ResultSet creditsCountResult = statement.executeQuery(
+                        "SELECT COUNT(*) FROM credit_request_entity;");
+                if (creditsCountResult.first()) {
+                    creditsCount = creditsCountResult.getInt(1);
+                }
+                final ResultSet ordersCountResult = statement.executeQuery(
+                        "SELECT COUNT(*) FROM order_entity;");
+                if (ordersCountResult.first()) {
+                    ordersCount = ordersCountResult.getInt(1);
+                }
+                return paymentsCount == 1 && ordersCount == 1 && creditsCount == 0;
             }
-        } catch (ClassNotFoundException e) {
-            System.out.println("Could not find the database driver " + e.getMessage());
-        } catch (SQLException e) {
-            System.out.println("Could not connect to the database " + e.getMessage());
         }
-
-        return false;
     }
 
+    @SneakyThrows
     public static boolean checkCredit() {
-        try {
-            try (Connection connection = createConnection()) {
-                try (Statement statement = connection.createStatement(
-                        ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
-                    int paymentsCount = 0;
-                    int creditsCount = 0;
-                    int ordersCount = 0;
+        try (Connection connection = createConnection()) {
+            try (Statement statement = connection.createStatement(
+                    ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
+                int paymentsCount = 0;
+                int creditsCount = 0;
+                int ordersCount = 0;
 
-                    final ResultSet paymentsCountResult = statement.executeQuery(
-                            "SELECT COUNT(*) FROM payment_entity;");
-                    if (paymentsCountResult.first()) {
-                        paymentsCount = paymentsCountResult.getInt(1);
-                    }
-                    final ResultSet creditsCountResult = statement.executeQuery(
-                            "SELECT COUNT(*) FROM credit_request_entity;");
-                    if (creditsCountResult.first()) {
-                        creditsCount = creditsCountResult.getInt(1);
-                    }
-                    final ResultSet ordersCountResult = statement.executeQuery(
-                            "SELECT COUNT(*) FROM order_entity;");
-                    if (ordersCountResult.first()) {
-                        ordersCount = ordersCountResult.getInt(1);
-                    }
-                    return paymentsCount == 0 && ordersCount == 1 && creditsCount == 1;
+                final ResultSet paymentsCountResult = statement.executeQuery(
+                        "SELECT COUNT(*) FROM payment_entity;");
+                if (paymentsCountResult.first()) {
+                    paymentsCount = paymentsCountResult.getInt(1);
                 }
+                final ResultSet creditsCountResult = statement.executeQuery(
+                        "SELECT COUNT(*) FROM credit_request_entity;");
+                if (creditsCountResult.first()) {
+                    creditsCount = creditsCountResult.getInt(1);
+                }
+                final ResultSet ordersCountResult = statement.executeQuery(
+                        "SELECT COUNT(*) FROM order_entity;");
+                if (ordersCountResult.first()) {
+                    ordersCount = ordersCountResult.getInt(1);
+                }
+                return paymentsCount == 0 && ordersCount == 1 && creditsCount == 1;
             }
-        } catch (ClassNotFoundException e) {
-            System.out.println("Could not find the database driver " + e.getMessage());
-        } catch (SQLException e) {
-            System.out.println("Could not connect to the database " + e.getMessage());
         }
-
-        return false;
     }
 
-    private static Connection createConnection() throws ClassNotFoundException, SQLException {
+    @SneakyThrows
+    private static Connection createConnection() {
         final String datasource = System.getProperty("app.datasource");
         final String dbAddress = System.getProperty("app.db_address");
         final String dbName = System.getProperty("app.db_name");
@@ -110,7 +94,8 @@ public final class DbUtils {
         return DriverManager.getConnection(url, dbUser, dbPass);
     }
 
-    private static void checkDriver(String datasource) throws ClassNotFoundException {
+    @SneakyThrows
+    private static void checkDriver(String datasource) {
         if ("mysql".equals(datasource)) {
             Class.forName("com.mysql.cj.jdbc.Driver");
         } else if ("postgres".equals(datasource)) {
