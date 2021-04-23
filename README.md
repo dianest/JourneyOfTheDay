@@ -1,11 +1,22 @@
 #### **How to run tests**
 
-1. docker-compose -f docker-compose.yml up -d
+First we need to start all our docker container. In order to do this we run docker-compose file. Flag -f let us specify the file, flag -d runs containers in the detached mode. 
 
-java -jar -Dspring.profiles.active=mysql artifacts\aqa-shop.jar
+**docker-compose -f docker-compose.yml up -d**
 
-gradlew -Dapp.datasource="mysql" test
+Then we need to start SUT. This is done via regular Java command for launching jar files. As a parameter we pass profile which will be used for testing.
 
-java -jar -Dspring.profiles.active=postgres artifacts\aqa-shop.jar
+ **java -jar -Dspring.profiles.active=mysql artifacts\aqa-shop.jar**
 
-gradlew -Dapp.datasource="postgres" test
+The with the help of Gradle wrapper we launch our tests, passing the database that we want to use as a parameter.
+
+*gradlew -Dapp.datasource="mysql" test*
+
+
+Next step is to stop running SUT. After this we can lauch it again with another profile to test with different data source.
+
+**java -jar -Dspring.profiles.active=postgres artifacts\aqa-shop.jar**
+
+And staring tests again with different database
+
+**gradlew -Dapp.datasource="postgres" test**
