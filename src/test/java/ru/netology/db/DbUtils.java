@@ -97,22 +97,24 @@ public final class DbUtils {
     }
 
     private static Connection createConnection() throws ClassNotFoundException, SQLException {
-        if (System.getProperty("app.datasource").equals("mysql")) {
-            final String driverName = "com.mysql.cj.jdbc.Driver";
-            Class.forName(driverName);
-            final String url = "jdbc:mysql://localhost:3306/app?autoReconnect=true&useSSL=false";
-            final String username = "app";
-            String password = "pass";
+        final String datasource = System.getProperty("app.datasource");
+        final String dbAddress = System.getProperty("app.db_address");
+        final String dbName = System.getProperty("app.db_name");
+        final String dbUser = System.getProperty("app.db_user");
+        final String dbPass = System.getProperty("app.db_pass");
 
-            return DriverManager.getConnection(url, username, password);
-        } else if (System.getProperty("app.datasource").equals("postgres")) {
-            final String driverName = "org.postgresql.Driver";
-            Class.forName(driverName);
-            final String url = "jdbc:postgresql://localhost:5432/app?autoReconnect=true&useSSL=false";
-            final String username = "app";
-            String password = "pass";
+        checkDriver(datasource);
 
-            return DriverManager.getConnection(url, username, password);
+        final String url = "jdbc:" + datasource + "://" + dbAddress + "/" + dbName + "?autoReconnect=true&useSSL=false";
+
+        return DriverManager.getConnection(url, dbUser, dbPass);
+    }
+
+    private static void checkDriver(String datasource) throws ClassNotFoundException {
+        if ("mysql".equals(datasource)) {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } else if ("postgres".equals(datasource)) {
+            Class.forName("org.postgresql.Driver");
         } else {
             throw new IllegalArgumentException("Unsupported datasource");
         }

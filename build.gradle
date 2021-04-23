@@ -28,7 +28,9 @@ test {
     useJUnitPlatform()
     systemProperty 'selenide.headless', System.getProperty('selenide.headless')
 
-    if (System.getProperty('app.datasource')) {
-        systemProperty 'app.datasource', System.getProperty('app.datasource')
-    }
+    systemProperty 'app.datasource', System.getProperty('app.datasource', 'mysql')
+    systemProperty 'app.db_address', System.getProperty('app.db_address', 'localhost:3306')
+    systemProperty 'app.db_name', System.getProperty('app.db_name', 'app')
+    systemProperty 'app.db_user', System.getProperty('app.db_user', 'app')
+    systemProperty 'app.db_pass', System.getProperty('app.db_pass', 'pass')
 }
