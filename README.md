@@ -20,3 +20,16 @@ Next step is to stop running SUT. After this we can lauch it again with another 
 Then staring tests again with different database
 
 **gradlew -Dapp.datasource="postgresql" -Dapp.db_address="localhost:5432" -Dapp.db_name="app" -Dapp.db_user="app" -Dapp.db_pass="pass" test**
+
+**Test plan** could be found here: 
+
+https://github.com/dianest/JourneyOfTheDay/blob/8f202bf453eac73948b80699195752a7bd5cb924/documentation/Plan.md
+
+**Test report** could be found here:
+
+https://github.com/dianest/JourneyOfTheDay/blob/8f202bf453eac73948b80699195752a7bd5cb924/documentation/Report.md
+
+**Summary report** could be found here:  
+
+https://github.com/dianest/JourneyOfTheDay/blob/8f202bf453eac73948b80699195752a7bd5cb924/documentation/Summary.md
+
