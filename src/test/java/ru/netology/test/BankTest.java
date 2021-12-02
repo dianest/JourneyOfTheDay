@@ -1,5 +1,7 @@
 package ru.netology.test;
 
+import com.codeborne.selenide.logevents.SelenideLogger;
+import io.qameta.allure.selenide.AllureSelenide;
 import org.junit.jupiter.api.*;
 
 import ru.netology.data.Card;
@@ -15,6 +17,11 @@ import static ru.netology.db.DbUtils.clearTables;
 
 public class BankTest {
     private StartPage startPage;
+
+    @BeforeAll
+    static void setUpAll() {
+        SelenideLogger.addListener("allure", new AllureSelenide());
+    }
 
     @BeforeEach
     public void setup() {

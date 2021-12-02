@@ -6,7 +6,7 @@ First we need to start all our docker container. In order to do this we run dock
 
 Then we need to start SUT. This is done via regular Java command for launching jar files. As a parameter we pass profile which will be used for testing.
 
- **java -jar -Dspring.profiles.active=mysql artifacts\aqa-shop.jar**
+ **java -jar artifacts\aqa-shop.jar --spring.profiles.active=mysql**
 
 The with the help of Gradle wrapper we launch our tests, passing the database that we want to use as a parameter.
 
@@ -15,7 +15,7 @@ The with the help of Gradle wrapper we launch our tests, passing the database th
 
 Next step is to stop running SUT. After this we can lauch it again with another profile to test with different data source.
 
-**java -jar -Dspring.profiles.active=postgres artifacts\aqa-shop.jar**
+**java -jar artifacts\aqa-shop.jar --spring.profiles.active=postgres**
 
 Then staring tests again with different database
 
